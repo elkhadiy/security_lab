@@ -26,7 +26,7 @@ architecture a_L_barrel of L_barrel is
   signal inner : std_logic_vector (SIZE-1 downto 0);
   signal amount_altered : std_logic_vector (1 downto 0);
 begin
-	amount_altered <= amount xor inject(1 downto 0);
+	amount_altered <= amount; -- xor inject(1 downto 0);
   inner <= d_in( SIZE/4*3-1 downto 0 ) & d_in( SIZE-1 downto SIZE/4*3 ) 
       when ( amount_altered(0)='1' ) else d_in;
   d_out <= inner( SIZE/2-1 downto 0 ) & inner( SIZE-1 downto SIZE/2 ) 

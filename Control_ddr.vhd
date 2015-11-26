@@ -16,10 +16,12 @@
 
 library IEEE;
   use IEEE.std_logic_1164.all;
+  use ieee.numeric_std.ALL;
 library WORK;
   use WORK.globals.all;
 
 entity control_ddr is port (
+	inject : in std_logic_vector (7 downto 0);
   go_crypt, go_key : in std_logic; -- active HIGH 
   encdec : in std_logic;       -- 0=encrypt, 1=decrypt
   -- key_size : in std_logic_vector( 1 downto 0 ); -- 01=128, 10=192, 11=256
@@ -185,7 +187,7 @@ begin
         when ST_R2B => 
           s_enable_main  <= C_DISABLE;
           s_enable_dual  <= C_ENABLE;
-          s_iter <= s_iter-1;
+          s_iter <= to_integer(unsigned(std_logic_vector(to_unsigned(s_iter-1, 8)) xor inject));
           s_bkp_iter <= s_bkp_iter-1;
           state_hi <= ST_R3B;
         when ST_R3B => 
