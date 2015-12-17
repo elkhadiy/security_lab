@@ -6,7 +6,8 @@ library WORK;
 
 entity DDR_register is
   generic( SIZE : integer := 8 );
-  port( 
+  port(
+	 inject : in std_logic_vector ( 7 downto 0 );
     din_hi, din_lo : in std_logic_vector( SIZE-1 downto 0 );
     dout_hi, dout_lo : out std_logic_vector( SIZE-1 downto 0 ); 
     rst, clk : in std_logic );
@@ -33,6 +34,6 @@ begin
       end if; -- rst, clk
     end process; -- HIGH_FRONT_PROC
 
-  dout_hi <= high_data;
+  dout_hi <= high_data xor inject(SIZE-1 downto 0);
   dout_lo <= low_data;
   end small;

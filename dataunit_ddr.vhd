@@ -14,7 +14,7 @@ library WORK;
     
 -- Component Declaration
 entity dataunit_ddr is port (
-	inject : in std_logic_vector ( 7 downto 0 );
+ inject : in std_logic_vector ( 7 downto 0 );
   inH : in std_logic_vector( 127 downto 0 ); 
   key : in std_logic_vector( 127 downto 0 ); 
   aux_sbox_in : in std_logic_vector(31 downto 0);
@@ -52,6 +52,7 @@ architecture a_dataunit of dataunit_ddr is
   component DDR_register is
     generic( SIZE : integer := 8 );
     port( 
+	 inject : in std_logic_vector ( 7 downto 0 );
       din_hi, din_lo : in std_logic_vector( SIZE-1 downto 0 );
       dout_hi, dout_lo : out std_logic_vector( SIZE-1 downto 0 ); 
       rst, clk : in std_logic );
@@ -59,7 +60,6 @@ architecture a_dataunit of dataunit_ddr is
   component L_barrel is
     generic ( SIZE : integer := 32 ); 
     port ( 
-		inject : in std_logic_vector (7 downto 0);
       d_in : in std_logic_vector (SIZE-1 downto 0);
       amount : in std_logic_vector (1 downto 0); -- 0 to 3
       d_out : out std_logic_vector (SIZE-1 downto 0)
@@ -134,9 +134,10 @@ begin
         outKey( 31 downto 24 ), 
         column_out( 31 downto 24 ) );
 --    end generate;
-  barrel_shifter : L_barrel port map(inject, column_out, ctrl_barrel, barrel_out );
+  barrel_shifter : L_barrel port map(column_out, ctrl_barrel, barrel_out );
   sbox_regs_layer : for I in 0 to 3 generate
-    sbox_DDR : DDR_register port map( din_hi=>barrel_out(8*I+7 downto 8*I), 
+    sbox_DDR : DDR_register port map( inject => inject,
+													din_hi=>barrel_out(8*I+7 downto 8*I), 
                                       din_lo=>barrel_out(8*I+7 downto 8*I),
                                       dout_hi=>sbox_regs_hi(8*I+7 downto 8*I),
                                       dout_lo=>sbox_regs_lo(8*I+7 downto 8*I),

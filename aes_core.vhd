@@ -7,7 +7,8 @@ library WORK;
     use WORK.globals.all;
 
 entity aes_core is port (
-		inject : in std_logic_vector ( 7 downto 0 );
+		inject_c : in std_logic_vector ( 7 downto 0 );
+		inject_d : in std_logic_vector ( 7 downto 0 );
     data_inH : in std_logic_vector( 127 downto 0 );   
     input_key : in std_logic_vector( 127 downto 0 ); 
     go_cipher, go_key, enc_command : in std_logic;   
@@ -92,7 +93,7 @@ begin
   
   s_data_in_H <= data_inH;
   DU : dataunit_ddr port map( 
-			inject => inject,
+			inject => inject_d,
         inH => s_data_in_H, 
         key => s_round_key, 
         aux_sbox_in => s_KS_to_DU,
@@ -114,7 +115,7 @@ begin
         outH => s_data_out_H,
         outKey => s_DU_to_KS ); 
   CU : control_ddr port map( 
-			inject => inject,
+			inject => inject_c,
         go_crypt => s_go_crypt, 
         go_key => s_go_key, 
         encdec => enc_command,

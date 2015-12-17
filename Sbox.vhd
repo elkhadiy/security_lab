@@ -17,6 +17,7 @@ architecture a_sbox of sbox is
   component DDR_register is
     generic( SIZE : integer := 8 );
     port( 
+	 inject : in std_logic_vector ( 7 downto 0 );
       din_hi, din_lo : in std_logic_vector( SIZE-1 downto 0 ); --  
       dout_hi, dout_lo : out std_logic_vector( SIZE-1 downto 0 ); 
       rst, clk : in std_logic );
@@ -94,18 +95,24 @@ begin
     inv:gf_inv port map (g, q);
 
     temp_reg_p : DDR_register generic map ( SIZE=>4 ) 
-                              port map( din_hi=>ah, din_lo=>ah, --dout=>p, 
+                              port map( 
+													inject => "00000000",
+														din_hi=>ah, din_lo=>ah, --dout=>p, 
                                         dout_hi=>p_hi, dout_lo=>p_lo,
                                         rst=>reset, clk=>clock );
     p <= p_hi when ( clock = '1' ) else p_lo;
     --temp_reg_q : DDR_register generic map ( SIZE=>4 ) port map(  g, q, reset, clock );
     temp_reg_q : DDR_register generic map ( SIZE=>4 ) 
-                              port map( din_hi=>q, din_lo=>q, --dout=>d, 
+                              port map(
+													inject => "00000000",
+													din_hi=>q, din_lo=>q, --dout=>d, 
                                         dout_hi=>d_hi, dout_lo=>d_lo,
                                         rst=>reset, clk=>clock );
     d <= d_hi when ( clock = '1' ) else d_lo;
     temp_reg_r : DDR_register generic map ( SIZE=>4 ) 
-                              port map( din_hi=>f, din_lo=>f, --dout=>r, 
+                              port map(
+													inject => "00000000",
+													din_hi=>f, din_lo=>f, --dout=>r, 
                                         dout_hi=>r_hi, dout_lo=>r_lo,
                                         rst=>reset, clk=>clock );
     r <= r_hi when ( clock = '1' ) else r_lo;
